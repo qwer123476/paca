@@ -3,6 +3,8 @@ local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
+local SAVE_FILE = "UserAuthKey_" .. LocalPlayer.UserId .. ".txt"
+
 local UserKeys = {
     [4396960314] = "fo#6r2oufr*#eoc",-- 누나
     [10472996475] = "68r279ft&2pit2S", -- 나 부계
@@ -11,6 +13,23 @@ local UserKeys = {
     [2432461669] = "oucfw8255w@g924f7ff", -- 썸머
 }
 
+local function runScript()
+    task.spawn(function()
+        local content = game:HttpGet("https://raw.githubusercontent.com/qwer123476/nan/main/ii")
+        loadstring(content)()
+    end)
+end
+
+-- 파일 확인: 이미 인증된 기록이 있는지 검사
+if isfile(SAVE_FILE) then
+    local savedKey = readfile(SAVE_FILE)
+    if UserKeys[LocalPlayer.UserId] and savedKey == UserKeys[LocalPlayer.UserId] then
+        runScript()
+        return -- 인증 완료 시 GUI 생성 안 함
+    end
+end
+
+-- [인증 GUI]
 local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "Auth"
 
@@ -58,10 +77,11 @@ Button.MouseButton1Click:Connect(function()
     local myId = LocalPlayer.UserId
     
     if UserKeys[myId] and input == UserKeys[myId] then
+        writefile(SAVE_FILE, input) -- 인증 성공 시 키 저장
         playEffect(true)
         task.wait(0.5)
         ScreenGui:Destroy()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/qwer123476/nan/main/ii"))()
+        runScript()
     else
         TextBox.Text = ""
         playEffect(false)
