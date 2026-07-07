@@ -1,0 +1,70 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+local UserKeys = {
+    [4396960314] = "fo#6r2oufr*#eoc",-- 누나
+    [10472996475] = "68r279ft&2pit2S", -- 나 부계
+    [2932138780] = "8f62ou=#29uo*cutwtgw<", -- 나
+    [10854413652] = "8dro7rf@wg7t90162", -- 헬로
+    [2432461669] = "oucfw8255w@g924f7ff", -- 썸머
+}
+
+local ScreenGui = Instance.new("ScreenGui", PlayerGui)
+ScreenGui.Name = "Auth"
+
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 300, 0, 150)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -75)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.BorderSizePixel = 0
+
+local UIStroke = Instance.new("UIStroke", MainFrame)
+UIStroke.Color = Color3.fromRGB(0, 150, 255)
+UIStroke.Thickness = 2
+
+local TextBox = Instance.new("TextBox", MainFrame)
+TextBox.Size = UDim2.new(0.8, 0, 0.3, 0)
+TextBox.Position = UDim2.new(0.1, 0, 0.2, 0)
+TextBox.PlaceholderText = "키를 입력하세요"
+TextBox.Text = ""
+
+local Button = Instance.new("TextButton", MainFrame)
+Button.Size = UDim2.new(0.8, 0, 0.3, 0)
+Button.Position = UDim2.new(0.1, 0, 0.6, 0)
+Button.Text = "확인"
+Button.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+Button.TextColor3 = Color3.new(1, 1, 1)
+
+local function playEffect(success)
+    if success then
+        TweenService:Create(UIStroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(0, 255, 100)}):Play()
+    else
+        local originPos = MainFrame.Position
+        UIStroke.Color = Color3.fromRGB(255, 50, 50)
+        for i = 1, 4 do
+            MainFrame:TweenPosition(originPos + UDim2.new(0, (i%2==0 and 10 or -10), 0, 0), "Out", "Linear", 0.05, true)
+            task.wait(0.05)
+        end
+        MainFrame:TweenPosition(originPos, "Out", "Quad", 0.1, true)
+        task.wait(0.5)
+        UIStroke.Color = Color3.fromRGB(0, 150, 255)
+    end
+end
+
+Button.MouseButton1Click:Connect(function()
+    local input = TextBox.Text
+    local myId = LocalPlayer.UserId
+    
+    if UserKeys[myId] and input == UserKeys[myId] then
+        playEffect(true)
+        task.wait(0.5)
+        ScreenGui:Destroy()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/qwer123476/nan/main/ii"))()
+    else
+        TextBox.Text = ""
+        playEffect(false)
+        TextBox.PlaceholderText = "오류: 권한 없음"
+    end
+end)
